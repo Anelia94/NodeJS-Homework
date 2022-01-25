@@ -16,28 +16,28 @@ http.get(currentWeatherfullUrl, (res) => {
     res.on("data", (chunk) => {
         // Data is being received in chunks, we add it to the data variable to save it
         data += chunk;
-    })
-        ; res.on("end", () => {
-            // all data has been received, now we can parse it and are done
-            const parsedData = JSON.parse(data);
-            const localtime = parsedData.location.localtime;
-            const weather = parsedData.current.temp_c;
+    });
+    res.on("end", () => {
+        // all data has been received, now we can parse it and are done
+        const parsedData = JSON.parse(data);
+        console.log(parsedData);
+        const localtime = parsedData.location.localtime;
+        const weather = parsedData.current.temp_c;
 
-            const message = getInformationAboutLocalTimeAndWeather(localtime, weather);
-            fs.writeSync(fileDescriptor, message);
+        const message = getInformationAboutLocalTimeAndWeather(localtime, weather);
+        fs.writeSync(fileDescriptor, message);
 
-            const jsonMessage = JSON.stringify(message);
-            console.log(message);
+        const jsonMessage = JSON.stringify(message);
+        console.log(message);
 
-            const receiver = getValueFromJSONFile('email', './config.json');
-            sendEmail(receiver, message);
+        const receiver = getValueFromJSONFile('email', './config.json');
+        sendEmail(receiver, message);
 
-            http.createServer(function (req, res) {
-                res.write(jsonMessage);
-                res.end();
-            }).listen(3000);
-
-        });
+        http.createServer(function (req, res) {
+            res.write(jsonMessage);
+            res.end();
+        }).listen(3001);
+    });
 });
 
 
@@ -61,8 +61,8 @@ function sendEmail(receiver, message) {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'nellyy.radeva@gmail.com',
-            pass: 'ijtkwodpsdinomha'
+            user: 'user',
+            pass: '**'
         }
     });
 
