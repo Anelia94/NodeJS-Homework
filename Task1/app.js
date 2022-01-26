@@ -1,11 +1,13 @@
-const API_KEY = '68ddb3f373ff46108ba73018222501';
-const URL = 'http://api.weatherapi.com/v1';
-const FILE_NAME = '/current.json';
-fs = require('fs');
-http = require('http');
-nodemailer = require('nodemailer');
-
-const cityName = getValueFromJSONFile('city', './config.json');
+/* eslint-disable no-undef */
+const fs = require('fs');
+const http = require('http');
+let nodemailer = require('nodemailer');
+const configJson = require('./config.json');
+require('dotenv').config({ debug: true, override: false });
+const cityName = configJson.city;
+const API_KEY = "68ddb3f373ff46108ba73018222501";
+const URL = "http://api.weatherapi.com/v1";
+const FILE_NAME = "/current.json";
 
 const fileDescriptor = fs.openSync("output.txt", "r+");
 
@@ -20,49 +22,34 @@ http.get(currentWeatherfullUrl, (res) => {
     res.on("end", () => {
         // all data has been received, now we can parse it and are done
         const parsedData = JSON.parse(data);
-        console.log(parsedData);
         const localtime = parsedData.location.localtime;
         const weather = parsedData.current.temp_c;
 
-        const message = getInformationAboutLocalTimeAndWeather(localtime, weather);
+        const message = `Localtime: ${localtime}, Weather: ${weather}`;
         fs.writeSync(fileDescriptor, message);
 
         const jsonMessage = JSON.stringify(message);
         console.log(message);
 
-        const receiver = getValueFromJSONFile('email', './config.json');
-        sendEmail(receiver, message);
+        const receiver = configJson.email;
+        const email = process.env.USER_EMAIL;
+        const password = process.env.PASSWORD;
+        sendEmail(receiver, message,email,password);
 
         http.createServer(function (req, res) {
             res.write(jsonMessage);
             res.end();
-        }).listen(3001);
+        }).listen(3000);
     });
 });
 
-
-function getValueFromJSONFile(value, fileName) {
-    const data = fs.readFileSync(fileName, 'utf8')
-    const jsonData = JSON.parse(data);
-    if (value === 'city') {
-        const cityName = jsonData.city;
-        return cityName;
-    } else if (value === 'email') {
-        const email = jsonData.email;
-        return email;
-    }
-}
-
-function getInformationAboutLocalTimeAndWeather(localtime, weather) {
-    return `Localtime: ${localtime}, Weather: ${weather}`;
-}
-
-function sendEmail(receiver, message) {
+function sendEmail(receiver, message,email,password) {
+    console.log(email,password);
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'user',
-            pass: '**'
+            user: email,
+            pass: password,
         }
     });
 

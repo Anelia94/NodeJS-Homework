@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "dotenv": "^14.3.0",
+    "nodemailer": "^6.7.2"
+  },
+  "devDependencies": {
+    "electron": "^16.0.7",
+    "eslint": "^8.7.0",
+    "eslint-config-prettier": "^8.3.0",
+    "kill-port": "^1.6.1",
+    "prettier": "2.5.1"
+  }
+}
