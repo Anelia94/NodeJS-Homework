@@ -1,6 +1,6 @@
 # Nodejs-Homework
 #Task1 
-Node application that returns the current weather and time in a given city.
+Node application that takes city name from file and returns the current weather and time of the city.
 
 To run this application you would first need to download/clone the source code from this repository.
 Add your email in congif.json
